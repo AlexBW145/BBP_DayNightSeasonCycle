@@ -66,6 +66,8 @@ namespace BaldiPlus_Seasons
 #endif
         }
 #if DEBUG
+        // THIRD PARTY FUNCTIONS THAT WERE PROBABLY USELESS TO USE ANYWAYS
+
         // Taken from Endless Floors
         // I really wished that Missing Texture Dude added this to the API...
         static Texture2D ThirdParty_EndlessFloors_FlipX(Texture2D texture)
@@ -130,7 +132,9 @@ namespace BaldiPlus_Seasons
 
         public static List<Texture2D> Grass = new List<Texture2D>();
         public static List<Material> Tree = new List<Material>();
+#if DEBUG
         public static Cubemap nightCubemap;
+#endif
         public static Material droplets;
         public static GameObject snowman;
     }

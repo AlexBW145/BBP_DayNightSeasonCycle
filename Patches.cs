@@ -240,6 +240,8 @@ namespace BaldiPlus_Seasons
             if (__instance.gameObject.name.ToLower().Contains("playground"))
             {
                 AudioSource source = __instance.gameObject.GetComponentInChildren<AudioSource>();
+                if (source == null) // Someone mentioned this, and it bugged me out about premade floors.
+                    return;
                 if (source.clip == Resources.FindObjectsOfTypeAll<AudioClip>().ToList().Find(g => g.name == "PlaygroundAmbience") || source.clip == Resources.FindObjectsOfTypeAll<AudioClip>().ToList().Find(g => g.name == "Crickets"))
                 {
                     switch (CycleManager.Instance.time)
