@@ -21,19 +21,24 @@ namespace BaldiPlus_Seasons
         {
             CycleManager.ec = null;
             var tree = Resources.FindObjectsOfTypeAll<GameObject>().ToList().Find(g => g.name == "TreeCG");
+            var treeApple = Resources.FindObjectsOfTypeAll<GameObject>().ToList().Find(g => g.name == "AppleTree");
             switch (CycleManager.Instance.seasons)
             {
                 case Seasons.Spring:
                     tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[0];
+                    tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[0];
                     break;
                 case Seasons.Summer:
                     tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[1];
+                    treeApple.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[1];
                     break;
                 case Seasons.Autumn:
                     tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[2];
+                    treeApple.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[2];
                     break;
                 case Seasons.Winter:
                     tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[3];
+                    treeApple.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[3];
                     break;
             }
 
@@ -45,7 +50,7 @@ namespace BaldiPlus_Seasons
                 switch (CycleManager.Instance.time)
                 {
                     case >= 0 and <= 5:
-                        ___sceneObject.skybox = CycleManager.nightCubemap;
+                        ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
                         ___sceneObject.skyboxColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
                         break;
                     case >= 6 and <= 11:
@@ -290,4 +295,27 @@ namespace BaldiPlus_Seasons
             }
         }
     }*/
+
+    [HarmonyPatch(typeof(FogEvent), "Begin")]
+    class FogColorChange
+    {
+        static void Prefix(ref Color ___fogColor)
+        {
+            switch (CycleManager.Instance.seasons)
+            {
+                case Seasons.Spring:
+                    ___fogColor = Color.gray;
+                    break;
+                case Seasons.Summer:
+                    ___fogColor = new Color(1f, 0.9883563f, 0.7607843f);
+                    break;
+                case Seasons.Autumn:
+                    ___fogColor = new Color(1f, 0.759434f, 0.759434f);
+                    break;
+                case Seasons.Winter:
+                    ___fogColor = Color.white;
+                    break;
+            }
+        }
+    }
 }

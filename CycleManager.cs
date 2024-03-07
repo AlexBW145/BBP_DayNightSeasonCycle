@@ -60,12 +60,12 @@ namespace BaldiPlus_Seasons
 #if DEBUG
             if (debug)
             {
-                seasons = Seasons.Winter;
-                time = DateTime.Now.Hour;
+                seasons = Seasons.Summer;
+                time = 21;
             }
 #endif
         }
-
+#if DEBUG
         // Taken from Endless Floors
         // I really wished that Missing Texture Dude added this to the API...
         static Texture2D ThirdParty_EndlessFloors_FlipX(Texture2D texture)
@@ -122,6 +122,7 @@ namespace BaldiPlus_Seasons
             cubemap.Apply();
             return cubemap;
         }
+#endif
 
         public Seasons seasons;
         public Weather weather;
@@ -131,5 +132,6 @@ namespace BaldiPlus_Seasons
         public static List<Material> Tree = new List<Material>();
         public static Cubemap nightCubemap;
         public static Material droplets;
+        public static GameObject snowman;
     }
 }

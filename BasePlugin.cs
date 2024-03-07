@@ -53,7 +53,9 @@ namespace BaldiPlus_Seasons
                 winterTree
             ]);
 
+#if DEBUG
             CycleManager.nightCubemap = CycleManager.ThirdParty_EndlessFloors_CubemapFromTexture2D(AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D/DarkSky_OneImage.png"));
+#endif
 
             foreach (LevelObject level in Resources.FindObjectsOfTypeAll<LevelObject>().ToList())
             {
@@ -67,6 +69,28 @@ namespace BaldiPlus_Seasons
             var thing = Material.Instantiate(Resources.FindObjectsOfTypeAll<Material>().ToList().Find(x => x.name == "DustTest"));
             thing.SetTexture("_BaseMap", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D/Droplet.png"));
             CycleManager.droplets = thing;
+
+            var thing2 = Material.Instantiate(Resources.FindObjectsOfTypeAll<Material>().ToList().Find(x => x.name == "TreeCG"));
+            thing2.SetTexture("_MainTex", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D/Snowman.png"));
+            CycleManager.snowman = GameObject.Instantiate(Resources.FindObjectsOfTypeAll<GameObject>().ToList().Find(x => x.name == "TreeCG"));
+            CycleManager.snowman.name = "Snowman";
+            CycleManager.snowman.GetComponentInChildren<MeshRenderer>().material = thing2;
+            CycleManager.snowman.GetComponentInChildren<MeshRenderer>().transform.localScale = new Vector3(10,10,1);
+            CycleManager.snowman.GetComponentInChildren<MeshRenderer>().transform.position = new Vector3(0,5,0);
+            MonoBehaviour.DontDestroyOnLoad(CycleManager.snowman);
+
+            // Spawns in all seasons which was supposed to spawn in winter only, useless.
+            /*Resources.FindObjectsOfTypeAll<RoomAsset>().ToList().Find(x => x.name.Contains("Playground")).basicSwaps.Add(
+                new BasicObjectSwapData()
+                {
+                    prefabToSwap = Resources.FindObjectsOfTypeAll<GameObject>().ToList().Find(x => x.name == "TreeCG").transform,
+                    potentialReplacements = [new WeightedTransform()
+                    {
+                        selection = CycleManager.snowman.transform,
+                        weight = 175
+                    }],
+                    chance = 1f
+                });*/
 
             did = true;
         }
