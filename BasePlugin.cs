@@ -23,7 +23,7 @@ namespace BaldiPlus_Seasons
             new GameObject("Cycle Manager", typeof(CycleManager));
             plugin = this;
 
-            //CycleManager.MIDIsongs.Add(AssetLoader.MidiFromFile(Path.Combine(AssetLoader.GetModPath(this), "MidiDB/school_winter.mid"), "school_winter"));
+            //CycleManager.MIDIsongs.Add(AssetLoader.MidiFromFile(Path.Combine(AssetLoader.GetModPath(this), "MidiDB", "school_winter.mid"), "school_winter"));
 
             harmony.PatchAll();
         }
@@ -37,14 +37,14 @@ namespace BaldiPlus_Seasons
         {
             if (did) return;
             CycleManager.Grass.AddRange([
-                AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D/Grass_Spring.png"),
+                AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "Grass_Spring.png"),
                 Resources.FindObjectsOfTypeAll<Texture2D>().ToList().Find(g => g.name == "Grass"),
-                AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D/Grass_Autumn.png"),
-                AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D/Grass_Winter.png")]);
+                AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "Grass_Autumn.png"),
+                AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "Grass_Winter.png")]);
             var autumnTree = Material.Instantiate(Resources.FindObjectsOfTypeAll<Material>().ToList().Find(g => g.name == "TreeCG"));
-            autumnTree.SetTexture("_MainTex", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D/TreeCGAutumn.png"));
+            autumnTree.SetTexture("_MainTex", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "TreeCGAutumn.png"));
             var winterTree = Material.Instantiate(Resources.FindObjectsOfTypeAll<Material>().ToList().Find(g => g.name == "TreeCG"));
-            winterTree.SetTexture("_MainTex", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D/TreeSnowed.png"));
+            winterTree.SetTexture("_MainTex", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "TreeSnowed.png"));
 
             CycleManager.Tree.AddRange([
                 Resources.FindObjectsOfTypeAll<Material>().ToList().Find(g => g.name == "TreeCG"),
@@ -54,7 +54,7 @@ namespace BaldiPlus_Seasons
             ]);
 
 #if DEBUG
-            CycleManager.nightCubemap = CycleManager.ThirdParty_EndlessFloors_CubemapFromTexture2D(AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D/DarkSky_OneImage.png"));
+            CycleManager.nightCubemap = CycleManager.ThirdParty_EndlessFloors_CubemapFromTexture2D(AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "DarkSky_OneImage.png"));
 #endif
 
             foreach (LevelObject level in Resources.FindObjectsOfTypeAll<LevelObject>().ToList())
@@ -67,11 +67,11 @@ namespace BaldiPlus_Seasons
             }
 
             var thing = Material.Instantiate(Resources.FindObjectsOfTypeAll<Material>().ToList().Find(x => x.name == "DustTest"));
-            thing.SetTexture("_BaseMap", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D/Droplet.png"));
+            thing.SetTexture("_BaseMap", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "Droplet.png"));
             CycleManager.droplets = thing;
 
             var thing2 = Material.Instantiate(Resources.FindObjectsOfTypeAll<Material>().ToList().Find(x => x.name == "TreeCG"));
-            thing2.SetTexture("_MainTex", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D/Snowman.png"));
+            thing2.SetTexture("_MainTex", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "Snowman.png"));
             CycleManager.snowman = GameObject.Instantiate(Resources.FindObjectsOfTypeAll<GameObject>().ToList().Find(x => x.name == "TreeCG"));
             CycleManager.snowman.name = "Snowman";
             CycleManager.snowman.GetComponentInChildren<MeshRenderer>().material = thing2;
