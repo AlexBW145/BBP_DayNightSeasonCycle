@@ -15,8 +15,7 @@
           "NETStandard.Library": "2.0.3",
           "UnityEngine.Modules": "2020.3.38",
           "Assembly-CSharp": "0.0.0.0",
-          "MTM101BaldAPI": "1.0.0.0",
-          "Newtonsoft.Json": "13.0.0.0"
+          "MTM101BaldAPI": "1.0.0.0"
         },
         "runtime": {
           "DaytimeSeasonCycle.dll": {}
@@ -404,14 +403,6 @@
           }
         }
       },
-      "Newtonsoft.Json/13.0.0.0": {
-        "runtime": {
-          "Newtonsoft.Json.dll": {
-            "assemblyVersion": "13.0.0.0",
-            "fileVersion": "13.0.2.0"
-          }
-        }
-      },
       "Unity.TextMeshPro/0.0.0.0": {
         "runtime": {
           "Unity.TextMeshPro.dll": {
@@ -779,11 +770,6 @@
       "sha512": ""
     },
     "MTM101BaldAPI/1.0.0.0": {
-      "type": "reference",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "Newtonsoft.Json/13.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

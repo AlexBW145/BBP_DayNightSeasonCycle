@@ -1,0 +1,75 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\alex1\\source\\repos\\Baldi Basics Plus - Daynight Season Cycle\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{1501ED4D-C78D-4951-97A4-EDB1C9E0F8D5}|BaldiPlus_Seasons.csproj|c:\\users\\alex1\\source\\repos\\baldi basics plus - daynight season cycle\\patches.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1501ED4D-C78D-4951-97A4-EDB1C9E0F8D5}|BaldiPlus_Seasons.csproj|solutionrelative:patches.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1501ED4D-C78D-4951-97A4-EDB1C9E0F8D5}|BaldiPlus_Seasons.csproj|c:\\users\\alex1\\source\\repos\\baldi basics plus - daynight season cycle\\baseplugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1501ED4D-C78D-4951-97A4-EDB1C9E0F8D5}|BaldiPlus_Seasons.csproj|solutionrelative:baseplugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1501ED4D-C78D-4951-97A4-EDB1C9E0F8D5}|BaldiPlus_Seasons.csproj|c:\\users\\alex1\\source\\repos\\baldi basics plus - daynight season cycle\\cyclemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1501ED4D-C78D-4951-97A4-EDB1C9E0F8D5}|BaldiPlus_Seasons.csproj|solutionrelative:cyclemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Patches.cs",
+              "DocumentMoniker": "C:\\Users\\alex1\\source\\repos\\Baldi Basics Plus - Daynight Season Cycle\\Patches.cs",
+              "RelativeDocumentMoniker": "Patches.cs",
+              "ToolTip": "C:\\Users\\alex1\\source\\repos\\Baldi Basics Plus - Daynight Season Cycle\\Patches.cs",
+              "RelativeToolTip": "Patches.cs",
+              "ViewState": "AQIAAAYBAAAAAAAAAAAwwBoBAABMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-01-16T01:38:54.735Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CycleManager.cs",
+              "DocumentMoniker": "C:\\Users\\alex1\\source\\repos\\Baldi Basics Plus - Daynight Season Cycle\\CycleManager.cs",
+              "RelativeDocumentMoniker": "CycleManager.cs",
+              "ToolTip": "C:\\Users\\alex1\\source\\repos\\Baldi Basics Plus - Daynight Season Cycle\\CycleManager.cs",
+              "RelativeToolTip": "CycleManager.cs",
+              "ViewState": "AQIAAH0AAAAAAAAAAAAQwJUAAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-06T01:40:11.202Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "BasePlugin.cs",
+              "DocumentMoniker": "C:\\Users\\alex1\\source\\repos\\Baldi Basics Plus - Daynight Season Cycle\\BasePlugin.cs",
+              "RelativeDocumentMoniker": "BasePlugin.cs",
+              "ToolTip": "C:\\Users\\alex1\\source\\repos\\Baldi Basics Plus - Daynight Season Cycle\\BasePlugin.cs",
+              "RelativeToolTip": "BasePlugin.cs",
+              "ViewState": "AQIAAEsAAAAAAAAAAAAowGMAAABUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-01-16T02:05:34.579Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

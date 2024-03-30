@@ -10,43 +10,48 @@ using System.Reflection.Emit;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
-using static UnityEngine.ParticleSystem.PlaybackState;
+using UnityEngine.Tilemaps;
 
 namespace BaldiPlus_Seasons
 {
     [HarmonyPatch(typeof(GameInitializer), "Initialize")]
     class ChangeSkybox
     {
+        //private static float snowmanChance = 0.5f;
+        //private static System.Random snowmanRNG = new System.Random();
         static void Prefix()
         {
             CycleManager.ec = null;
             var tree = Resources.FindObjectsOfTypeAll<GameObject>().ToList().Find(g => g.name == "TreeCG");
             var treeApple = Resources.FindObjectsOfTypeAll<GameObject>().ToList().Find(g => g.name == "AppleTree");
-            switch (CycleManager.Instance.seasons)
+            if (CycleManager.Tree.Count >= 4)
             {
-                case Seasons.Spring:
-                    tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[0];
-                    tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[0];
-                    break;
-                case Seasons.Summer:
-                    tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[1];
-                    treeApple.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[1];
-                    break;
-                case Seasons.Autumn:
-                    tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[2];
-                    treeApple.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[2];
-                    break;
-                case Seasons.Winter:
-                    tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[3];
-                    treeApple.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[3];
-                    break;
+                switch (CycleManager.Instance.seasons)
+                {
+                    case Seasons.Spring:
+                        tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[0];
+                        tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[0];
+                        break;
+                    case Seasons.Summer:
+                        tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[1];
+                        treeApple.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[1];
+                        break;
+                    case Seasons.Autumn:
+                        tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[2];
+                        treeApple.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[2];
+                        break;
+                    case Seasons.Winter:
+                        tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[3];
+                        treeApple.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[3];
+                        break;
+                }
             }
 
             CycleManager.Instance.RefreshTime();
 
-            if (Singleton<CoreGameManager>.Instance != null)
+            if (CoreGameManager.Instance != null)
             {
-                SceneObject ___sceneObject = Singleton<CoreGameManager>.Instance.sceneObject;
+                SceneObject ___sceneObject = CoreGameManager.Instance.sceneObject;
                 switch (CycleManager.Instance.time)
                 {
                     case >= 0 and <= 5:
@@ -79,13 +84,15 @@ namespace BaldiPlus_Seasons
         }
     }
 
-    [HarmonyPatch(typeof(EnvironmentController), "GenerateLight")]
+    // Old patch crashes the generator, useless.
+    /*[HarmonyPatch(typeof(EnvironmentController), "GenerateLight")]
     class AdjustLightProperties
     {
         static bool Prefix(EnvironmentController __instance, Cell tile, Color color, int strength, ref LightController[,] ___lightMap, ref IntVector2 ____lightPos) 
         {
             Color outsideColo = color;
-            if (tile.room.gameObject.name.ToLower().Contains("playground"))
+            SeasonalRoom room = CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(tile.room.gameObject.name.ToLower()));
+            if (room != null & room.affectsLighting)
                 switch (CycleManager.Instance.time)
                 {
                     case (>= 0 and <= 5) or (>= 18 and <= 23):
@@ -127,8 +134,9 @@ namespace BaldiPlus_Seasons
             stopwatch.Stop();
             return false;
         }
-    }
+    }*/
 
+    // Tried to use during 0.3.8, useless.
     /*[HarmonyPatch(typeof(LevelGenerator), "Generate", MethodType.Enumerator)]
     class AdjustLightProperties
     {
@@ -154,6 +162,7 @@ namespace BaldiPlus_Seasons
         }
     }*/
 
+    // Not part of the reworked, useless.
     /*[HarmonyPatch(typeof(PlaygroundSpecialRoom))]
     class PlaygroundPatches // (0.3 script, useless)
     {
@@ -211,22 +220,56 @@ namespace BaldiPlus_Seasons
     {
         static void Prefix(RoomController __instance)
         {
-            if (__instance.florTex == CycleManager.Grass[1])
+            if (CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())) != null)
             {
                 switch (CycleManager.Instance.seasons)
                 {
                     case Seasons.Spring:
-                        __instance.florTex = CycleManager.Grass[0];
+                        __instance.florTex = CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).floorReplacements[0];
                         break;
                     case Seasons.Summer:
-                        __instance.florTex = CycleManager.Grass[1];
+                        __instance.florTex = CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).floorReplacements[1];
                         break;
                     case Seasons.Autumn:
-                        __instance.florTex = CycleManager.Grass[2];
+                        __instance.florTex = CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).floorReplacements[2];
                         break;
                     case Seasons.Winter:
-                        __instance.florTex = CycleManager.Grass[3];
+                        __instance.florTex = CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).floorReplacements[3];
                         break;
+                }
+                if (CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).targetsWallTexture)
+                {
+                    switch (CycleManager.Instance.seasons)
+                    {
+                        case Seasons.Spring:
+                            __instance.wallTex = CycleManager.targetRooms.Find(x => x.roomAsset.name == __instance.name).wallReplacements[0];
+                            break;
+                        case Seasons.Summer:
+                            __instance.wallTex = CycleManager.targetRooms.Find(x => x.roomAsset.name == __instance.name).wallReplacements[1];
+                            break;
+                        case Seasons.Autumn:
+                            __instance.wallTex = CycleManager.targetRooms.Find(x => x.roomAsset.name == __instance.name).wallReplacements[2];
+                            break;
+                        case Seasons.Winter:
+                            __instance.wallTex = CycleManager.targetRooms.Find(x => x.roomAsset.name == __instance.name).wallReplacements[3];
+                            break;
+                    }
+                }
+                if (CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).affectsLighting)
+                {
+                    foreach (var light in __instance.cells) {
+                        switch (CycleManager.Instance.time)
+                        {
+                            case (>= 0 and <= 5) or (>= 18 and <= 23):
+                                light.lightColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                                __instance.ec.SetLight(false, light);
+                                break;
+                            case (>= 6 and <= 11) or (>= 12 and <= 17):
+                                light.lightColor = Color.white;
+                                __instance.ec.SetLight(true, light);
+                                break;
+                        }
+                    }
                 }
             }
         }
@@ -309,13 +352,13 @@ namespace BaldiPlus_Seasons
                     ___fogColor = Color.gray;
                     break;
                 case Seasons.Summer:
-                    ___fogColor = new Color(1f, 0.9883563f, 0.7607843f);
+                    ___fogColor = Color.white;
                     break;
                 case Seasons.Autumn:
                     ___fogColor = new Color(1f, 0.759434f, 0.759434f);
                     break;
                 case Seasons.Winter:
-                    ___fogColor = Color.white;
+                    ___fogColor = new Color(0.9292453f, 0.9825677f, 0f);
                     break;
             }
         }

@@ -8,6 +8,7 @@ using System;
 using System.Security.Cryptography;
 using System.IO;
 using MTM101BaldAPI.AssetTools;
+using MTM101BaldAPI.Registers;
 
 namespace BaldiPlus_Seasons
 {
@@ -24,18 +25,26 @@ namespace BaldiPlus_Seasons
             plugin = this;
 
             //CycleManager.MIDIsongs.Add(AssetLoader.MidiFromFile(Path.Combine(AssetLoader.GetModPath(this), "MidiDB", "school_winter.mid"), "school_winter"));
+            LoadingEvents.RegisterOnAssetsLoaded(PreLoad, false);
+            GeneratorManagement.Register(this, GenerationModType.Override, (name, num, ld) =>
+            {
+                switch (name)
+                {
+                    case "F1" or "F2" or "F3":
+                        ld.standardDarkLevel = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                        if (name == "F1")
+                            ld.lightMode = LightMode.Cumulative;
+                        else if (name == "F2")
+                            ld.lightMode = LightMode.Greatest;
+                        break;
+                }
+            });
 
             harmony.PatchAll();
         }
-    }
 
-    [HarmonyPatch(typeof(NameManager), "Awake")]
-    class PostPatch
-    {
-        public static bool did { get; private set; } = false;
-        static void Prefix()
+        private void PreLoad()
         {
-            if (did) return;
             CycleManager.Grass.AddRange([
                 AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "Grass_Spring.png"),
                 Resources.FindObjectsOfTypeAll<Texture2D>().ToList().Find(g => g.name == "Grass"),
@@ -54,17 +63,8 @@ namespace BaldiPlus_Seasons
             ]);
 
 #if DEBUG
-            CycleManager.nightCubemap = CycleManager.ThirdParty_EndlessFloors_CubemapFromTexture2D(AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "DarkSky_OneImage.png"));
+            //CycleManager.nightCubemap = CycleManager.ThirdParty_EndlessFloors_CubemapFromTexture2D(AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "DarkSky_OneImage.png"));
 #endif
-
-            foreach (LevelObject level in Resources.FindObjectsOfTypeAll<LevelObject>().ToList())
-            {
-                level.standardDarkLevel = new Color(0.1254902f, 0.09803922f, 0.09803922f);
-                if (level.name == "Main1")
-                    level.lightMode = LightMode.Cumulative;
-                else if (level.name == "Main2")
-                    level.lightMode = LightMode.Greatest;
-            }
 
             var thing = Material.Instantiate(Resources.FindObjectsOfTypeAll<Material>().ToList().Find(x => x.name == "DustTest"));
             thing.SetTexture("_BaseMap", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "Droplet.png"));
@@ -75,9 +75,10 @@ namespace BaldiPlus_Seasons
             CycleManager.snowman = GameObject.Instantiate(Resources.FindObjectsOfTypeAll<GameObject>().ToList().Find(x => x.name == "TreeCG"));
             CycleManager.snowman.name = "Snowman";
             CycleManager.snowman.GetComponentInChildren<MeshRenderer>().material = thing2;
-            CycleManager.snowman.GetComponentInChildren<MeshRenderer>().transform.localScale = new Vector3(10,10,1);
-            CycleManager.snowman.GetComponentInChildren<MeshRenderer>().transform.position = new Vector3(0,5,0);
+            CycleManager.snowman.GetComponentInChildren<MeshRenderer>().transform.localScale = new Vector3(10, 10, 1);
+            CycleManager.snowman.GetComponentInChildren<MeshRenderer>().transform.position = new Vector3(0, 5, 0);
             MonoBehaviour.DontDestroyOnLoad(CycleManager.snowman);
+            CycleManager.snowman.SetActive(false);
 
             // Spawns in all seasons which was supposed to spawn in winter only, useless.
             /*Resources.FindObjectsOfTypeAll<RoomAsset>().ToList().Find(x => x.name.Contains("Playground")).basicSwaps.Add(
@@ -92,7 +93,11 @@ namespace BaldiPlus_Seasons
                     chance = 1f
                 });*/
 
-            did = true;
+            // Just separating as "asset" because of the target texture...
+            RoomAsset asset = Resources.FindObjectsOfTypeAll<RoomAsset>().ToList().Find(x => x.name.Contains("Playground"));
+            CycleManager.Instance.AddNewRoomTarget(asset, CycleManager.Grass, true);
+            asset = Resources.FindObjectsOfTypeAll<RoomAsset>().ToList().Find(x => x.name.Contains("FieldTrip"));
+            CycleManager.Instance.AddNewRoomTarget(asset, CycleManager.Grass, true);
         }
     }
 }

@@ -60,7 +60,7 @@ namespace BaldiPlus_Seasons
 #if DEBUG
             if (debug)
             {
-                seasons = Seasons.Summer;
+                seasons = Seasons.Winter;
                 time = 21;
             }
 #endif
@@ -133,9 +133,54 @@ namespace BaldiPlus_Seasons
         public static List<Texture2D> Grass = new List<Texture2D>();
         public static List<Material> Tree = new List<Material>();
 #if DEBUG
-        public static Cubemap nightCubemap;
+        //public static Cubemap nightCubemap;
 #endif
         public static Material droplets;
         public static GameObject snowman;
+
+        public static List<SeasonalRoom> targetRooms = new List<SeasonalRoom>();
+
+        public SeasonalRoom AddNewRoomTarget(RoomAsset rmAsset, List<Texture2D> floorReplaces, bool light = false, bool targetWalls = false, List<Texture2D> wallReplaces = null)
+        {
+            try
+            {
+                SeasonalRoom room = new SeasonalRoom();
+                room.roomAsset = rmAsset;
+                //room.targetFloorTexture = targetFloorTexture;
+                room.affectsLighting = light;
+                room.floorReplacements = floorReplaces;
+                if (targetWalls) {
+                    room.targetsWallTexture = targetWalls;
+                    room.wallReplacements = wallReplaces;
+                }
+
+                targetRooms.Add(room);
+                return room;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("  ____________  _________   _____ _________   _____ ____  _   __   ________  __________    ______\r\n /_  __/  _/  |/  / ____/  / ___// ____/   | / ___// __ \\/ | / /  / ____/\\ \\/ / ____/ /   / ____/\r\n  / /  / // /|_/ / __/     \\__ \\/ __/ / /| | \\__ \\/ / / /  |/ /  / /      \\  / /   / /   / __/   \r\n / / _/ // /  / / /___    ___/ / /___/ ___ |___/ / /_/ / /|  /  / /___    / / /___/ /___/ /___   \r\n/_/ /___/_/  /_/_____/   /____/_____/_/  |_/____/\\____/_/ |_/   \\____/   /_/\\____/_____/_____/   \r\n                                                                                                 \n\nDid you get an error? Oops! Here's what you've made!");
+                if (rmAsset == null)
+                    Debug.LogError("rmAsset is null, you can grab vanilla ones by Resources.FindObjectsOfTypeAll<RoomAsset>().ToList().Find(x => x.name == \"name\") or you can use your own!");
+                /*else if (targetFloorTexture == null)
+                    Debug.LogError("Did you not even do targetFloorTexture correctly?? Lame!");*/
+                else if (floorReplaces == null)
+                    Debug.LogError("floorReplaces uses a List<Texture2D>, not a Texture2D[]! Use the .ToList() for that!");
+
+                Debug.LogError("\n" + e);
+            }
+
+            return null;
+        }
+    }
+
+    public class SeasonalRoom
+    {
+        public RoomAsset roomAsset;
+        public List<Texture2D> floorReplacements = new List<Texture2D>();
+
+        public bool affectsLighting = false;
+        public bool targetsWallTexture = false;
+        public List<Texture2D> wallReplacements = new List<Texture2D>();
     }
 }
