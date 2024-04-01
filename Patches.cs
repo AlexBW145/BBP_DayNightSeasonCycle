@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using MonoMod.Cil;
 using MTM101BaldAPI;
+using MTM101BaldAPI.Registers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -52,24 +53,49 @@ namespace BaldiPlus_Seasons
             if (CoreGameManager.Instance != null)
             {
                 SceneObject ___sceneObject = CoreGameManager.Instance.sceneObject;
-                switch (CycleManager.Instance.time)
+                if (BasePlugin.eastern)
                 {
-                    case >= 0 and <= 5:
-                        ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
-                        ___sceneObject.skyboxColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
-                        break;
-                    case >= 6 and <= 11:
-                        ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
-                        ___sceneObject.skyboxColor = Color.white;
-                        break;
-                    case >= 12 and <= 17:
-                        ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_DayStandard"));
-                        ___sceneObject.skyboxColor = Color.white;
-                        break;
-                    case >= 18 and <= 23:
-                        ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
-                        ___sceneObject.skyboxColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
-                        break;
+                    switch (CycleManager.Instance.time)
+                    {
+                        case >= 12 and <= 17:
+                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
+                            ___sceneObject.skyboxColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                            break;
+                        case >= 18 and <= 23:
+                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
+                            ___sceneObject.skyboxColor = Color.white;
+                            break;
+                        case >= 0 and <= 5:
+                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_DayStandard"));
+                            ___sceneObject.skyboxColor = Color.white;
+                            break;
+                        case >= 6 and <= 11:
+                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
+                            ___sceneObject.skyboxColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (CycleManager.Instance.time)
+                    {
+                        case >= 0 and <= 5:
+                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
+                            ___sceneObject.skyboxColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                            break;
+                        case >= 6 and <= 11:
+                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
+                            ___sceneObject.skyboxColor = Color.white;
+                            break;
+                        case >= 12 and <= 17:
+                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_DayStandard"));
+                            ___sceneObject.skyboxColor = Color.white;
+                            break;
+                        case >= 18 and <= 23:
+                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
+                            ___sceneObject.skyboxColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                            break;
+                    }
                 }
             }
         }
@@ -136,7 +162,7 @@ namespace BaldiPlus_Seasons
         }
     }*/
 
-    // Tried to use during 0.3.8, useless.
+    // Tried to use during 0.3.8 ol' sakes, useless.
     /*[HarmonyPatch(typeof(LevelGenerator), "Generate", MethodType.Enumerator)]
     class AdjustLightProperties
     {
@@ -220,7 +246,7 @@ namespace BaldiPlus_Seasons
     {
         static void Prefix(RoomController __instance)
         {
-            if (CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())) != null)
+            if (CycleManager.targetRooms.Exists(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())))
             {
                 switch (CycleManager.Instance.seasons)
                 {
@@ -258,16 +284,33 @@ namespace BaldiPlus_Seasons
                 if (CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).affectsLighting)
                 {
                     foreach (var light in __instance.cells) {
-                        switch (CycleManager.Instance.time)
+                        if (BasePlugin.eastern)
                         {
-                            case (>= 0 and <= 5) or (>= 18 and <= 23):
-                                light.lightColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
-                                __instance.ec.SetLight(false, light);
-                                break;
-                            case (>= 6 and <= 11) or (>= 12 and <= 17):
-                                light.lightColor = Color.white;
-                                __instance.ec.SetLight(true, light);
-                                break;
+                            switch (CycleManager.Instance.time)
+                            {
+                                case (>= 6 and <= 11) or (>= 12 and <= 17):
+                                    light.lightColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                                    __instance.ec.SetLight(false, light);
+                                    break;
+                                case (>= 0 and <= 5) or (>= 18 and <= 23):
+                                    light.lightColor = Color.white;
+                                    __instance.ec.SetLight(true, light);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            switch (CycleManager.Instance.time)
+                            {
+                                case (>= 0 and <= 5) or (>= 18 and <= 23):
+                                    light.lightColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                                    __instance.ec.SetLight(false, light);
+                                    break;
+                                case (>= 6 and <= 11) or (>= 12 and <= 17):
+                                    light.lightColor = Color.white;
+                                    __instance.ec.SetLight(true, light);
+                                    break;
+                            }
                         }
                     }
                 }
@@ -287,14 +330,29 @@ namespace BaldiPlus_Seasons
                     return;
                 if (source.clip == Resources.FindObjectsOfTypeAll<AudioClip>().ToList().Find(g => g.name == "PlaygroundAmbience") || source.clip == Resources.FindObjectsOfTypeAll<AudioClip>().ToList().Find(g => g.name == "Crickets"))
                 {
-                    switch (CycleManager.Instance.time)
+                    if (BasePlugin.eastern)
                     {
-                        case (>= 0 and <= 5) or (>= 18 and <= 23):
-                            source.clip = Resources.FindObjectsOfTypeAll<AudioClip>().ToList().Find(g => g.name == "Crickets");
-                            break;
-                        case (>= 6 and <= 11) or (>= 12 and <= 17):
-                            source.clip = Resources.FindObjectsOfTypeAll<AudioClip>().ToList().Find(g => g.name == "PlaygroundAmbience");
-                            break;
+                        switch (CycleManager.Instance.time)
+                        {
+                            case (>= 6 and <= 11) or (>= 12 and <= 17):
+                                source.clip = Resources.FindObjectsOfTypeAll<AudioClip>().ToList().Find(g => g.name == "Crickets");
+                                break;
+                            case (>= 0 and <= 5) or (>= 18 and <= 23):
+                                source.clip = Resources.FindObjectsOfTypeAll<AudioClip>().ToList().Find(g => g.name == "PlaygroundAmbience");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (CycleManager.Instance.time)
+                        {
+                            case (>= 0 and <= 5) or (>= 18 and <= 23):
+                                source.clip = Resources.FindObjectsOfTypeAll<AudioClip>().ToList().Find(g => g.name == "Crickets");
+                                break;
+                            case (>= 6 and <= 11) or (>= 12 and <= 17):
+                                source.clip = Resources.FindObjectsOfTypeAll<AudioClip>().ToList().Find(g => g.name == "PlaygroundAmbience");
+                                break;
+                        }
                     }
                     source.Play();
                 }

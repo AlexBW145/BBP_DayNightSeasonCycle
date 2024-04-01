@@ -40,21 +40,43 @@ namespace BaldiPlus_Seasons
 
         public void RefreshTime()
         {
-            switch (DateTime.Today.Month)
+            if (BasePlugin.southern)
             {
-                case 1 or 2 or 12:
-                    seasons = Seasons.Winter;
-                    break;
-                case 3 or 4 or 5:
-                    seasons = Seasons.Spring;
-                    break;
-                case 6 or 7 or 8:
-                    seasons = Seasons.Summer;
-                    break;
-                case 9 or 10 or 11:
-                    seasons = Seasons.Autumn;
-                    break;
+                switch (DateTime.Today.Month)
+                {
+                    case 1 or 2 or 12:
+                        seasons = Seasons.Summer;
+                        break;
+                    case 3 or 4 or 5:
+                        seasons = Seasons.Autumn;
+                        break;
+                    case 6 or 7 or 8:
+                        seasons = Seasons.Winter;
+                        break;
+                    case 9 or 10 or 11:
+                        seasons = Seasons.Spring;
+                        break;
+                }
             }
+            else
+            {
+                switch (DateTime.Today.Month)
+                {
+                    case 1 or 2 or 12:
+                        seasons = Seasons.Winter;
+                        break;
+                    case 3 or 4 or 5:
+                        seasons = Seasons.Spring;
+                        break;
+                    case 6 or 7 or 8:
+                        seasons = Seasons.Summer;
+                        break;
+                    case 9 or 10 or 11:
+                        seasons = Seasons.Autumn;
+                        break;
+                }
+            }    
+            
             time = DateTime.Now.Hour;
 
 #if DEBUG

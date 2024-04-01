@@ -9,15 +9,21 @@ using System.Security.Cryptography;
 using System.IO;
 using MTM101BaldAPI.AssetTools;
 using MTM101BaldAPI.Registers;
+using MTM101BaldAPI.OptionsAPI;
+using MTM101BaldAPI.SaveSystem;
+using UnityEngine.Events;
 
 namespace BaldiPlus_Seasons
 {
-    [BepInPlugin("alexbw145.baldiplus.seasons", "Day & Season Cycle", "1.0.0.0")]
+    [BepInPlugin("alexbw145.baldiplus.seasons", "Day & Season Cycle", "1.1.1.0")]
     [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
     [BepInProcess("BALDI.exe")]
     public class BasePlugin : BaseUnityPlugin
     {
         public static BasePlugin plugin;
+        public static bool southern = false;
+        public static bool eastern = false;
+
         private void Awake()
         {
             Harmony harmony = new Harmony("alexbw145.baldiplus.seasons");
@@ -39,8 +45,19 @@ namespace BaldiPlus_Seasons
                         break;
                 }
             });
-
             harmony.PatchAll();
+
+            CustomOptionsCore.OnMenuInitialize += AddOptions;
+            ModdedSaveSystem.AddSaveLoadAction(this, (isSave, path) =>
+            {
+                if (isSave)
+                    File.WriteAllText(Path.Combine(path, "managerOptions.txt"), southern.ToString() +"\n"+ eastern.ToString());
+                else if (File.Exists(Path.Combine(path, "managerOptions.txt")))
+                {
+                    southern = bool.Parse(File.ReadAllLines(Path.Combine(path, "managerOptions.txt"))[0]);
+                    eastern = bool.Parse(File.ReadAllLines(Path.Combine(path, "managerOptions.txt"))[1]);
+                }
+            });
         }
 
         private void PreLoad()
@@ -93,11 +110,27 @@ namespace BaldiPlus_Seasons
                     chance = 1f
                 });*/
 
-            // Just separating as "asset" because of the target texture...
-            RoomAsset asset = Resources.FindObjectsOfTypeAll<RoomAsset>().ToList().Find(x => x.name.Contains("Playground"));
-            CycleManager.Instance.AddNewRoomTarget(asset, CycleManager.Grass, true);
-            asset = Resources.FindObjectsOfTypeAll<RoomAsset>().ToList().Find(x => x.name.Contains("FieldTrip"));
-            CycleManager.Instance.AddNewRoomTarget(asset, CycleManager.Grass, true);
+            // Adding deez...
+            CycleManager.Instance.AddNewRoomTarget(RoomAssetMetaStorage.Instance.Get("Room_Playground_1").value, CycleManager.Grass, true);
+            CycleManager.Instance.AddNewRoomTarget(RoomAssetMetaStorage.Instance.Get("Room_FieldTrip").value, CycleManager.Grass, true);
+        }
+
+        private void AddOptions(OptionsMenu __instance)
+        {
+            GameObject ob = CustomOptionsCore.CreateNewCategory(__instance, "Time & Season Cycle");
+            MenuToggle sh = CustomOptionsCore.CreateToggleButton(__instance, new Vector2(75f, 0f), "Southern Hemisphere Mode", southern, "Sets the current real season to the other side,\nusually for players who lives in the southern hemisphere.\n\nDefaults to \"false\"!");
+            // Yes, he did not focus on preventing a two step way...
+            sh.GetComponentInChildren<StandardMenuButton>().OnPress.AddListener(() =>
+            {
+                southern = sh.Value;
+            });
+            MenuToggle wh = CustomOptionsCore.CreateToggleButton(__instance, new Vector2(75f, -60f), "Eastern Hemisphere Mode", eastern, "Sets the current real time to the other side,\nusually for players who lives in the eastern hemisphere.\n\nDefaults to \"false\"!");
+            wh.GetComponentInChildren<StandardMenuButton>().OnPress.AddListener(() =>
+            {
+                eastern = wh.Value;
+            });
+            sh.transform.SetParent(ob.transform, false);
+            wh.transform.SetParent(ob.transform, false);
         }
     }
 }
