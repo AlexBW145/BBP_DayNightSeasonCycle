@@ -29,6 +29,7 @@ namespace BaldiPlus_Seasons
             Harmony harmony = new Harmony("alexbw145.baldiplus.seasons");
             new GameObject("Cycle Manager", typeof(CycleManager));
             plugin = this;
+            harmony.PatchAllConditionals();
 
             //CycleManager.MIDIsongs.Add(AssetLoader.MidiFromFile(Path.Combine(AssetLoader.GetModPath(this), "MidiDB", "school_winter.mid"), "school_winter"));
             LoadingEvents.RegisterOnAssetsLoaded(PreLoad, false);
@@ -36,16 +37,17 @@ namespace BaldiPlus_Seasons
             {
                 switch (name)
                 {
-                    case "F1" or "F2" or "F3":
+                    default:
                         ld.standardDarkLevel = new Color(0.1254902f, 0.09803922f, 0.09803922f);
                         if (name == "F1")
                             ld.lightMode = LightMode.Cumulative;
                         else if (name == "F2")
                             ld.lightMode = LightMode.Greatest;
                         break;
+                    case "FOX" or "B1":
+                        break;
                 }
             });
-            harmony.PatchAll();
 
             CustomOptionsCore.OnMenuInitialize += AddOptions;
             ModdedSaveSystem.AddSaveLoadAction(this, (isSave, path) =>

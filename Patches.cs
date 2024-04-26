@@ -246,44 +246,48 @@ namespace BaldiPlus_Seasons
     {
         static void Prefix(RoomController __instance)
         {
-            if (CycleManager.targetRooms.Exists(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())))
+            if (__instance.gameObject.name == "") // Worst way to bugfix, but it works.
+                return;
+            if (CycleManager.targetRooms.Exists(x => x.roomAsset.name.ToLower().Contains(__instance.gameObject.name.ToLower())))
             {
+                SeasonalRoom seasonAsset = CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.gameObject.name.ToLower()));
                 switch (CycleManager.Instance.seasons)
                 {
                     case Seasons.Spring:
-                        __instance.florTex = CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).floorReplacements[0];
+                        __instance.florTex = seasonAsset.floorReplacements[0];
                         break;
                     case Seasons.Summer:
-                        __instance.florTex = CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).floorReplacements[1];
+                        __instance.florTex = seasonAsset.floorReplacements[1];
                         break;
                     case Seasons.Autumn:
-                        __instance.florTex = CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).floorReplacements[2];
+                        __instance.florTex = seasonAsset.floorReplacements[2];
                         break;
                     case Seasons.Winter:
-                        __instance.florTex = CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).floorReplacements[3];
+                        __instance.florTex = seasonAsset.floorReplacements[3];
                         break;
                 }
-                if (CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).targetsWallTexture)
+                if (seasonAsset.targetsWallTexture)
                 {
                     switch (CycleManager.Instance.seasons)
                     {
                         case Seasons.Spring:
-                            __instance.wallTex = CycleManager.targetRooms.Find(x => x.roomAsset.name == __instance.name).wallReplacements[0];
+                            __instance.wallTex = seasonAsset.wallReplacements[0];
                             break;
                         case Seasons.Summer:
-                            __instance.wallTex = CycleManager.targetRooms.Find(x => x.roomAsset.name == __instance.name).wallReplacements[1];
+                            __instance.wallTex = seasonAsset.wallReplacements[1];
                             break;
                         case Seasons.Autumn:
-                            __instance.wallTex = CycleManager.targetRooms.Find(x => x.roomAsset.name == __instance.name).wallReplacements[2];
+                            __instance.wallTex = seasonAsset.wallReplacements[2];
                             break;
                         case Seasons.Winter:
-                            __instance.wallTex = CycleManager.targetRooms.Find(x => x.roomAsset.name == __instance.name).wallReplacements[3];
+                            __instance.wallTex = seasonAsset.wallReplacements[3];
                             break;
                     }
                 }
-                if (CycleManager.targetRooms.Find(x => x.roomAsset.name.ToLower().Contains(__instance.name.ToLower())).affectsLighting)
+                if (seasonAsset.affectsLighting)
                 {
-                    foreach (var light in __instance.cells) {
+                    foreach (var light in __instance.cells)
+                    {
                         if (BasePlugin.eastern)
                         {
                             switch (CycleManager.Instance.time)
