@@ -18,60 +18,58 @@ namespace BaldiPlus_Seasons
     [HarmonyPatch(typeof(GameInitializer), "Initialize")]
     class ChangeSkybox
     {
-        //private static float snowmanChance = 0.5f;
-        //private static System.Random snowmanRNG = new System.Random();
         static void Prefix()
         {
             CycleManager.ec = null;
-            var tree = Resources.FindObjectsOfTypeAll<GameObject>().ToList().Find(g => g.name == "TreeCG");
-            var treeApple = Resources.FindObjectsOfTypeAll<GameObject>().ToList().Find(g => g.name == "AppleTree");
-            if (CycleManager.Tree.Count >= 4)
+            var trees = Resources.FindObjectsOfTypeAll<GameObject>().Where(g => g.name.ToLower().Contains("tree") && g.GetComponentInChildren<MeshRenderer>() != null);
+            if (BasePlugin.assetMan.Get<Material[]>("Tree").ToList().Count >= 4)
             {
                 switch (CycleManager.Instance.seasons)
                 {
                     case Seasons.Spring:
-                        tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[0];
-                        tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[0];
+                        foreach (var tree in trees)
+                            tree.GetComponentInChildren<MeshRenderer>().material = BasePlugin.assetMan.Get<Material[]>("Tree")[0];
                         break;
                     case Seasons.Summer:
-                        tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[1];
-                        treeApple.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[1];
+                        foreach (var tree in trees)
+                            tree.GetComponentInChildren<MeshRenderer>().material = BasePlugin.assetMan.Get<Material[]>("Tree")[1];
                         break;
                     case Seasons.Autumn:
-                        tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[2];
-                        treeApple.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[2];
+                        foreach (var tree in trees)
+                            tree.GetComponentInChildren<MeshRenderer>().material = BasePlugin.assetMan.Get<Material[]>("Tree")[2];
                         break;
                     case Seasons.Winter:
-                        tree.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[3];
-                        treeApple.GetComponentInChildren<MeshRenderer>().material = CycleManager.Tree[3];
+                        foreach (var tree in trees)
+                            tree.GetComponentInChildren<MeshRenderer>().material = BasePlugin.assetMan.Get<Material[]>("Tree")[3];
                         break;
                 }
             }
 
             CycleManager.Instance.RefreshTime();
-
+        }
+        static void Postfix()
+        {
             if (CoreGameManager.Instance != null)
             {
-                SceneObject ___sceneObject = CoreGameManager.Instance.sceneObject;
                 if (BasePlugin.eastern)
                 {
                     switch (CycleManager.Instance.time)
                     {
                         case >= 12 and <= 17:
-                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
-                            ___sceneObject.skyboxColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                            Shader.SetGlobalTexture("_Skybox", BasePlugin.assetMan.Get<Cubemap>("NightSky"));
+                            Shader.SetGlobalColor("_SkyboxColor", new Color(0.1254902f, 0.09803922f, 0.09803922f));
                             break;
                         case >= 18 and <= 23:
-                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
-                            ___sceneObject.skyboxColor = Color.white;
+                            Shader.SetGlobalTexture("_Skybox", Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight")));
+                            Shader.SetGlobalColor("_SkyboxColor", Color.white);
                             break;
                         case >= 0 and <= 5:
-                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_DayStandard"));
-                            ___sceneObject.skyboxColor = Color.white;
+                            Shader.SetGlobalTexture("_Skybox", Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_DayStandard")));
+                            Shader.SetGlobalColor("_SkyboxColor", Color.white);
                             break;
                         case >= 6 and <= 11:
-                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
-                            ___sceneObject.skyboxColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                            Shader.SetGlobalTexture("_Skybox", Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight")));
+                            Shader.SetGlobalColor("_SkyboxColor", new Color(0.4509804f, 0.372549f, 0.6156863f));
                             break;
                     }
                 }
@@ -80,20 +78,20 @@ namespace BaldiPlus_Seasons
                     switch (CycleManager.Instance.time)
                     {
                         case >= 0 and <= 5:
-                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
-                            ___sceneObject.skyboxColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                            Shader.SetGlobalTexture("_Skybox", BasePlugin.assetMan.Get<Cubemap>("NightSky"));
+                            Shader.SetGlobalColor("_SkyboxColor", new Color(0.1254902f, 0.09803922f, 0.09803922f));
                             break;
                         case >= 6 and <= 11:
-                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
-                            ___sceneObject.skyboxColor = Color.white;
+                            Shader.SetGlobalTexture("_Skybox", Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight")));
+                            Shader.SetGlobalColor("_SkyboxColor", Color.white);
                             break;
                         case >= 12 and <= 17:
-                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_DayStandard"));
-                            ___sceneObject.skyboxColor = Color.white;
+                            Shader.SetGlobalTexture("_Skybox", Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_DayStandard")));
+                            Shader.SetGlobalColor("_SkyboxColor", Color.white);
                             break;
                         case >= 18 and <= 23:
-                            ___sceneObject.skybox = Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight"));
-                            ___sceneObject.skyboxColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                            Shader.SetGlobalTexture("_Skybox", Resources.FindObjectsOfTypeAll<Cubemap>().ToList().Find(s => s.name.Contains("_Twilight")));
+                            Shader.SetGlobalColor("_SkyboxColor", new Color(0.4509804f, 0.372549f, 0.6156863f));
                             break;
                     }
                 }
@@ -110,7 +108,7 @@ namespace BaldiPlus_Seasons
         }
     }
 
-    // Old patch crashes the generator, useless.
+    // Old patch that crashes the generator, useless.
     /*[HarmonyPatch(typeof(EnvironmentController), "GenerateLight")]
     class AdjustLightProperties
     {
@@ -241,7 +239,7 @@ namespace BaldiPlus_Seasons
         }
     }*/
 
-    [HarmonyPatch(typeof(RoomController), "GenerateTextureAtlas")]
+    [HarmonyPatch(typeof(RoomController), nameof(RoomController.GenerateTextureAtlas), [typeof(int)])]
     class ChangeTextureAndLighting
     {
         static void Prefix(RoomController __instance)
@@ -292,13 +290,17 @@ namespace BaldiPlus_Seasons
                         {
                             switch (CycleManager.Instance.time)
                             {
-                                case (>= 6 and <= 11) or (>= 12 and <= 17):
+                                case >= 12 and <= 17:
                                     light.lightColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
-                                    __instance.ec.SetLight(false, light);
+                                    light.SetLight(false);
+                                    break;
+                                case >= 6 and <= 11:
+                                    light.lightColor = new Color(0.4509804f, 0.372549f, 0.6156863f);
+                                    light.SetLight(true);
                                     break;
                                 case (>= 0 and <= 5) or (>= 18 and <= 23):
                                     light.lightColor = Color.white;
-                                    __instance.ec.SetLight(true, light);
+                                    light.SetLight(true);
                                     break;
                             }
                         }
@@ -306,13 +308,17 @@ namespace BaldiPlus_Seasons
                         {
                             switch (CycleManager.Instance.time)
                             {
-                                case (>= 0 and <= 5) or (>= 18 and <= 23):
+                                case >= 0 and <= 5:
                                     light.lightColor = new Color(0.1254902f, 0.09803922f, 0.09803922f);
-                                    __instance.ec.SetLight(false, light);
+                                    light.SetLight(false);
+                                    break;
+                                case >= 18 and <= 23:
+                                    light.lightColor = new Color(0.4509804f, 0.372549f, 0.6156863f);
+                                    light.SetLight(true);
                                     break;
                                 case (>= 6 and <= 11) or (>= 12 and <= 17):
                                     light.lightColor = Color.white;
-                                    __instance.ec.SetLight(true, light);
+                                    light.SetLight(true);
                                     break;
                             }
                         }
@@ -322,7 +328,7 @@ namespace BaldiPlus_Seasons
         }
     }
 
-    [HarmonyPatch(typeof(RoomController), "GenerateTextureAtlas")]
+    [HarmonyPatch(typeof(RoomController), nameof(RoomController.GenerateTextureAtlas), [typeof(int)])]
     class ChangeAmbience // Stupid thing to do with the ambience class (while it's applied to two of the special rooms.)
     {
         static void Postfix(RoomController __instance)
@@ -365,41 +371,39 @@ namespace BaldiPlus_Seasons
     }
 
     // Reserved, useless.
-    /*[HarmonyPatch(typeof(RoomController), "GenerateTextureAtlas")]
+    /*[HarmonyPatch(typeof(SunlightRoomFunction), "Initialize")]
     class MakeItRain
     {
-        static void Postfix(RoomController __instance)
+        static void Postfix(SunlightRoomFunction __instance, RoomController room)
         {
-            if (__instance.gameObject.name.ToLower().Contains("playground"))
-            {
-                ParticleSystem particle = __instance.GetComponentsInChildren<MeshRenderer>().ToList().Find(r => r.name == "Quad (4)").gameObject.AddComponent<ParticleSystem>();
-                var main = particle.main;
+            ParticleSystem particle = __instance.GetComponentsInChildren<MeshRenderer>().ToList().Find(r => r.name == "Quad (4)").gameObject.AddComponent<ParticleSystem>();
+            var main = particle.main;
 
-                main.duration = 1f;
-                main.startLifetime = 2.2f;
-                main.startSpeed = 5f;
-                main.gravityModifier = 1f;
-                main.simulationSpeed = 2f;
+            main.duration = 1f;
+            main.startLifetime = 2.2f;
+            main.startSpeed = 5f;
+            main.gravityModifier = 1f;
+            main.simulationSpeed = 2f;
 
-                var shape = particle.shape;
-                shape.shapeType = ParticleSystemShapeType.Box;
-                shape.position = new Vector3(0f, 0f, 10f);
-                shape.scale = new Vector3(10f,10f,1f);
+            var shape = particle.shape;
+            shape.shapeType = ParticleSystemShapeType.Box;
+            //shape.position = new Vector3(0f, 0f, 10f);
+            //shape.scale = new Vector3(10f, 10f, 1f);
+            shape.randomDirectionAmount = 0.5f;
 
-                var velocity = particle.velocityOverLifetime;
-                velocity.enabled = true;
-                velocity.z = -5f;
-                velocity.speedModifier = 5f;
+            var velocity = particle.velocityOverLifetime;
+            velocity.enabled = true;
+            velocity.z = -5f;
+            velocity.speedModifier = 5f;
 
-                var render = __instance.GetComponentsInChildren<MeshRenderer>().ToList().Find(r => r.name == "Quad (4)").gameObject.GetComponent<ParticleSystemRenderer>();
-                render.renderMode = ParticleSystemRenderMode.Billboard;
-                render.material = CycleManager.droplets;
-                render.sortMode = ParticleSystemSortMode.None;
-                render.maxParticleSize = 0.01f;
-                render.alignment = ParticleSystemRenderSpace.Facing;
+            var render = __instance.GetComponentsInChildren<MeshRenderer>().ToList().Find(r => r.name == "Quad (4)").gameObject.GetComponent<ParticleSystemRenderer>();
+            render.renderMode = ParticleSystemRenderMode.Billboard;
+            render.material = CycleManager.droplets;
+            render.sortMode = ParticleSystemSortMode.None;
+            render.maxParticleSize = 0.01f;
+            render.alignment = ParticleSystemRenderSpace.Facing;
 
-                particle.Play();
-            }
+            particle.Play();
         }
     }*/
 
@@ -420,7 +424,7 @@ namespace BaldiPlus_Seasons
                     ___fogColor = new Color(1f, 0.759434f, 0.759434f);
                     break;
                 case Seasons.Winter:
-                    ___fogColor = new Color(0.9292453f, 0.9825677f, 0f);
+                    ___fogColor = new Color(0.6966447f, 0.7788854f, 0.9528302f);
                     break;
             }
         }

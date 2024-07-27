@@ -15,14 +15,15 @@ using UnityEngine.Events;
 
 namespace BaldiPlus_Seasons
 {
-    [BepInPlugin("alexbw145.baldiplus.seasons", "Day & Season Cycle", "1.1.1.0")]
-    [BepInDependency("mtm101.rulerp.bbplus.baldidevapi")]
+    [BepInPlugin("alexbw145.baldiplus.seasons", "Day & Season Cycle", "1.1.2.0")]
+    [BepInDependency("mtm101.rulerp.bbplus.baldidevapi", MTM101BaldiDevAPI.VersionNumber)]
     [BepInProcess("BALDI.exe")]
     public class BasePlugin : BaseUnityPlugin
     {
-        public static BasePlugin plugin;
+        public static BasePlugin plugin { get; private set; }
         public static bool southern = false;
         public static bool eastern = false;
+        public static AssetManager assetMan = new AssetManager();
 
         private void Awake()
         {
@@ -32,22 +33,7 @@ namespace BaldiPlus_Seasons
             harmony.PatchAllConditionals();
 
             //CycleManager.MIDIsongs.Add(AssetLoader.MidiFromFile(Path.Combine(AssetLoader.GetModPath(this), "MidiDB", "school_winter.mid"), "school_winter"));
-            LoadingEvents.RegisterOnAssetsLoaded(PreLoad, false);
-            GeneratorManagement.Register(this, GenerationModType.Override, (name, num, ld) =>
-            {
-                switch (name)
-                {
-                    default:
-                        ld.standardDarkLevel = new Color(0.1254902f, 0.09803922f, 0.09803922f);
-                        if (name == "F1")
-                            ld.lightMode = LightMode.Cumulative;
-                        else if (name == "F2")
-                            ld.lightMode = LightMode.Greatest;
-                        break;
-                    case "FOX" or "B1":
-                        break;
-                }
-            });
+            LoadingEvents.RegisterOnAssetsLoaded(Info, PreLoad, false);
 
             CustomOptionsCore.OnMenuInitialize += AddOptions;
             ModdedSaveSystem.AddSaveLoadAction(this, (isSave, path) =>
@@ -64,34 +50,32 @@ namespace BaldiPlus_Seasons
 
         private void PreLoad()
         {
-            CycleManager.Grass.AddRange([
-                AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "Grass_Spring.png"),
+            assetMan.Add<Texture2D[]>("Grass", [
+                AssetLoader.TextureFromMod(this, "Texture2D", "Grass_Spring.png"),
                 Resources.FindObjectsOfTypeAll<Texture2D>().ToList().Find(g => g.name == "Grass"),
-                AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "Grass_Autumn.png"),
-                AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "Grass_Winter.png")]);
+                AssetLoader.TextureFromMod(this, "Texture2D", "Grass_Autumn.png"),
+                AssetLoader.TextureFromMod(this, "Texture2D", "Grass_Winter.png")]);
             var autumnTree = Material.Instantiate(Resources.FindObjectsOfTypeAll<Material>().ToList().Find(g => g.name == "TreeCG"));
-            autumnTree.SetTexture("_MainTex", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "TreeCGAutumn.png"));
+            autumnTree.SetTexture("_MainTex", AssetLoader.TextureFromMod(this, "Texture2D", "TreeCGAutumn.png"));
             var winterTree = Material.Instantiate(Resources.FindObjectsOfTypeAll<Material>().ToList().Find(g => g.name == "TreeCG"));
-            winterTree.SetTexture("_MainTex", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "TreeSnowed.png"));
+            winterTree.SetTexture("_MainTex", AssetLoader.TextureFromMod(this, "Texture2D", "TreeSnowed.png"));
+            var springTree = Material.Instantiate(Resources.FindObjectsOfTypeAll<Material>().ToList().Find(g => g.name == "TreeCG"));
+            springTree.SetTexture("_MainTex", AssetLoader.TextureFromMod(this, "Texture2D", "TreeCGSpring.png"));
 
-            CycleManager.Tree.AddRange([
-                Resources.FindObjectsOfTypeAll<Material>().ToList().Find(g => g.name == "TreeCG"),
+            assetMan.Add<Material[]>("Tree", [
+                springTree,
                 Resources.FindObjectsOfTypeAll<Material>().ToList().Find(g => g.name == "TreeCG"),
                 autumnTree,
-                winterTree
-            ]);
-
-#if DEBUG
-            //CycleManager.nightCubemap = CycleManager.ThirdParty_EndlessFloors_CubemapFromTexture2D(AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "DarkSky_OneImage.png"));
-#endif
+                winterTree]);
+            assetMan.Add<Cubemap>("NightSky", AssetLoader.CubemapFromMod(this, "Texture2D", "Cubemap_Night.png"));
 
             var thing = Material.Instantiate(Resources.FindObjectsOfTypeAll<Material>().ToList().Find(x => x.name == "DustTest"));
-            thing.SetTexture("_BaseMap", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "Droplet.png"));
+            thing.SetTexture("_BaseMap", AssetLoader.TextureFromMod(this, "Texture2D", "Droplet.png"));
             CycleManager.droplets = thing;
 
             var thing2 = Material.Instantiate(Resources.FindObjectsOfTypeAll<Material>().ToList().Find(x => x.name == "TreeCG"));
-            thing2.SetTexture("_MainTex", AssetLoader.TextureFromMod(BasePlugin.plugin, "Texture2D", "Snowman.png"));
-            CycleManager.snowman = GameObject.Instantiate(Resources.FindObjectsOfTypeAll<GameObject>().ToList().Find(x => x.name == "TreeCG"));
+            thing2.SetTexture("_MainTex", AssetLoader.TextureFromMod(this, "Texture2D", "Snowman.png"));
+            CycleManager.snowman = Instantiate(Resources.FindObjectsOfTypeAll<GameObject>().ToList().Find(x => x.name == "TreeCG"));
             CycleManager.snowman.name = "Snowman";
             CycleManager.snowman.GetComponentInChildren<MeshRenderer>().material = thing2;
             CycleManager.snowman.GetComponentInChildren<MeshRenderer>().transform.localScale = new Vector3(10, 10, 1);
@@ -113,8 +97,25 @@ namespace BaldiPlus_Seasons
                 });*/
 
             // Adding deez...
-            CycleManager.Instance.AddNewRoomTarget(RoomAssetMetaStorage.Instance.Get("Room_Playground_1").value, CycleManager.Grass, true);
-            CycleManager.Instance.AddNewRoomTarget(RoomAssetMetaStorage.Instance.Get("Room_FieldTrip").value, CycleManager.Grass, true);
+            foreach (var playground in RoomAssetMetaStorage.Instance.FindAll(x => x.value.name.ToLower().Contains("Playground".ToLower())))
+                CycleManager.Instance.AddNewRoomTarget(playground.value, assetMan.Get<Texture2D[]>("Grass").ToList(), true);
+            //CycleManager.Instance.AddNewRoomTarget(RoomAssetMetaStorage.Instance.Get("Room_FieldTrip").value, CycleManager.Grass, true);
+
+            GeneratorManagement.Register(this, GenerationModType.Override, (name, num, ld) =>
+            {
+                switch (name)
+                {
+                    default:
+                        ld.standardDarkLevel = new Color(0.1254902f, 0.09803922f, 0.09803922f);
+                        if (name == "F1")
+                            ld.lightMode = LightMode.Cumulative;
+                        else if (name == "F2")
+                            ld.lightMode = LightMode.Greatest;
+                        break;
+                    case "FOX" or "B1":
+                        break;
+                }
+            });
         }
 
         private void AddOptions(OptionsMenu __instance)
