@@ -34,6 +34,12 @@ namespace BaldiPlus_Seasons
 
             //CycleManager.MIDIsongs.Add(AssetLoader.MidiFromFile(Path.Combine(AssetLoader.GetModPath(this), "MidiDB", "school_winter.mid"), "school_winter"));
             LoadingEvents.RegisterOnAssetsLoaded(Info, PreLoad, false);
+            LoadingEvents.RegisterOnAssetsLoaded(Info, () =>
+            {
+                // Adding deez...
+                foreach (var playground in RoomAssetMetaStorage.Instance.FindAll(x => x.value.name.ToLower().Contains("Playground".ToLower())))
+                    CycleManager.Instance.AddNewRoomTarget(playground.value, assetMan.Get<Texture2D[]>("Grass").ToList(), true);
+            }, true);
 
             CustomOptionsCore.OnMenuInitialize += AddOptions;
             ModdedSaveSystem.AddSaveLoadAction(this, (isSave, path) =>
@@ -96,9 +102,6 @@ namespace BaldiPlus_Seasons
                     chance = 1f
                 });*/
 
-            // Adding deez...
-            foreach (var playground in RoomAssetMetaStorage.Instance.FindAll(x => x.value.name.ToLower().Contains("Playground".ToLower())))
-                CycleManager.Instance.AddNewRoomTarget(playground.value, assetMan.Get<Texture2D[]>("Grass").ToList(), true);
             //CycleManager.Instance.AddNewRoomTarget(RoomAssetMetaStorage.Instance.Get("Room_FieldTrip").value, CycleManager.Grass, true);
 
             GeneratorManagement.Register(this, GenerationModType.Override, (name, num, ld) =>
