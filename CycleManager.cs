@@ -33,6 +33,7 @@ public class CycleManager : MonoBehaviour
 #endif
 
     public static CycleManager Instance { get; private set; }
+    internal System.Random visualRNG = new System.Random();
     private void Awake()
     {
         DontDestroyOnLoad(this);
@@ -210,7 +211,7 @@ public class SeasonCyclerRender : MonoBehaviour
         var replacer = seasonReplacers[(int)CycleManager.Instance.seasons];
         if ((replacer.weightedMaterials?.Count ?? 0) != 0 || (replacer.weightedSprites?.Count ?? 0) != 0)
         {
-            var rng = FindObjectsOfType<LevelBuilder>(false).Length > 0 ? FindObjectOfType<LevelBuilder>(false).controlledRNG : new System.Random(CoreGameManager.Instance.Seed());
+            var rng = CycleManager.Instance.visualRNG;
             rng.Next(1, 99);
             if ((replacer.weightedMaterials?.Count ?? 0) != 0)
                 replacer.material = WeightedMaterial.ControlledRandomSelection(replacer.weightedMaterials.ToArray(), rng);

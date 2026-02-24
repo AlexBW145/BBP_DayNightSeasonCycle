@@ -1,5 +1,4 @@
-﻿using BepInEx;
-using HarmonyLib;
+﻿using HarmonyLib;
 using MTM101BaldAPI;
 using MTM101BaldAPI.Reflection;
 using ShadowGroveGames.RealWeatherAndTimeEvents.Scripts.OpenWeatherApi.DTO;
@@ -74,6 +73,7 @@ class SetVars
     [HarmonyPatch(typeof(LevelBuilder), nameof(LevelBuilder.StartGenerate)), HarmonyPostfix]
     static void Postfix(LevelBuilder __instance)
     {
+        CycleManager.Instance.visualRNG = new System.Random(CoreGameManager.Instance.Seed() + __instance.seedOffset);
         if (CycleManager.Instance.weather == Weather.WeatherMainType.Fog)
             __instance.Ec.AddFog(OutsideWeatherFunction.fogweather);
     }
