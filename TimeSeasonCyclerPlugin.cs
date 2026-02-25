@@ -14,7 +14,7 @@ using BepInEx.Configuration;
 namespace BaldiPlus_Seasons;
 
 [BepInPlugin("alexbw145.baldiplus.seasons", "Day & Season Cycle", "2.0.0.0")]
-[BepInDependency("mtm101.rulerp.bbplus.baldidevapi", MTM101BaldiDevAPI.VersionNumber)]
+[BepInDependency("mtm101.rulerp.bbplus.baldidevapi", "10.0.0.0")]
 public class TimeSeasonCyclerPlugin : BaseUnityPlugin
 {
     public static TimeSeasonCyclerPlugin Instance { get; private set; }
